@@ -3,6 +3,28 @@
 **Status that never goes down.** A multi-region status page + incident timeline for global on-call
 teams, built on **Amazon Aurora DSQL** (active-active, us-east-1 ⟷ ap-southeast-1) and deployed on Vercel.
 
+[![Live](https://img.shields.io/badge/▶_Live_Demo-shiplog--sandy.vercel.app-22C55E?style=for-the-badge&logo=vercel&logoColor=white)](https://shiplog-sandy.vercel.app)
+&nbsp;[![Deck](https://img.shields.io/badge/Pitch-DECK.pdf-EF4444?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](./DECK.pdf)
+
+![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=flat-square&logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Aurora DSQL](https://img.shields.io/badge/Aurora_DSQL-527FFF?style=flat-square&logo=amazonrds&logoColor=white)
+![Multi-region](https://img.shields.io/badge/active--active-us--east--1_⟷_ap--southeast--1-FF9900?style=flat-square&logo=amazonaws&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
+
+> 🟢 **Live:** https://shiplog-sandy.vercel.app &nbsp;·&nbsp; 📊 **Pitch deck:** [DECK.pdf](./DECK.pdf)
+
+## Architecture
+
+```mermaid
+flowchart TD
+  A[👀 On-call team<br/>Next.js on Vercel · region lens] -->|read/write| Q[lib/queries + lib/occ<br/>optimistic concurrency]
+  Q -->|"writes (region-tagged)"| D1[(Aurora DSQL<br/>us-east-1 · ACTIVE)]
+  Q -->|"writes (region-tagged)"| D2[(Aurora DSQL<br/>ap-southeast-1 · ACTIVE)]
+  D1 <-->|"strongly-consistent active-active"| D2
+  Q -.->|no AWS configured| M[lib/store.ts<br/>in-memory mock · clearly labeled]
+```
+
 > Track 4 · Open Innovation · AWS × Vercel Hackathon. UI generated with **v0**, then wired onto the real
 > Aurora DSQL backend. The strongest *Most Original* shot: DSQL used for the one workload it was built
 > for — strongly-consistent writes from multiple regions at once, surviving any single-region failure.
