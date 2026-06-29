@@ -1,0 +1,138 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: 'Inter', 'Inter Fallback', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Source Serif 4', 'Georgia', ui-serif, serif;
+  --font-mono: var(--font-geist-mono), 'Geist Mono Fallback', ui-monospace, monospace;
+
+  /* ShipLog palette */
+  --color-slate-primary: #0f172a;
+  --color-surface: #f8fafc;
+  --color-hairline: #e2e8f0;
+  --color-accent-green: #16a34a;
+
+  /* Status colors */
+  --color-status-operational: #16a34a;
+  --color-status-degraded: #d97706;
+  --color-status-partial-outage: #ea580c;
+  --color-status-major-outage: #dc2626;
+  --color-status-maintenance: #2563eb;
+
+  /* Region badge colors */
+  --color-region-us: #0ea5e9;
+  --color-region-us-bg: #f0f9ff;
+  --color-region-ap: #7c3aed;
+  --color-region-ap-bg: #f5f3ff;
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  color-scheme: light;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #0f172a;
+  --primary-foreground: #f8fafc;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --destructive: #dc2626;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #16a34a;
+  --chart-1: #16a34a;
+  --chart-2: #d97706;
+  --chart-3: #ea580c;
+  --chart-4: #dc2626;
+  --chart-5: #2563eb;
+  --radius: 0.75rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #0f172a;
+  --sidebar-primary-foreground: #f8fafc;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #16a34a;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+  html {
+    @apply bg-background;
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.pulse-live {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes flash-row {
+  0% { background-color: transparent; }
+  25% { background-color: #fef9c3; }
+  75% { background-color: #fef9c3; }
+  100% { background-color: transparent; }
+}
+
+.flash-update {
+  animation: flash-row 1.5s ease-in-out;
+}
