@@ -101,6 +101,66 @@ When your service is down, your status page can't be too — and your on-call te
   auto-retries and shows the count (`✓ Committed via us-east-1 — auto-retried 2×; nothing lost`).
   You can never get a silent lost write — and that's exactly why we chose Aurora DSQL.
 
+## Pages and API
+
+| Page | Purpose |
+|---|---|
+| `/` | Public status page: component health, active incidents, uptime bars, subscribe form |
+| `/history` | Past incidents |
+| `/admin` | On-call console: open incidents, post updates, change component status |
+| `/admin/incident/[id]` | Incident detail and timeline |
+
+All pages and APIs take a `?region=us-east-1` or `?region=ap-southeast-1` lens.
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/api/status` | GET | Components and active incidents for a region |
+| `/api/incident` | GET, POST | List incidents / open a new incident |
+| `/api/incident/[id]` | GET | One incident with its timeline |
+| `/api/update` | POST | Post a timeline update (OCC-retried on conflict) |
+| `/api/component` | POST | Change a component's status |
+| `/api/subscribe` | POST | Subscribe to status notifications |
+
+## Environment variables
+
+Copy `.env.example` to `.env.local`. With no `DSQL_HOST*` set the app runs in mock mode.
+
+| Variable | Needed for | Description |
+|---|---|---|
+| `DSQL_HOST_VIRGINIA` | live DSQL | Aurora DSQL endpoint in `us-east-1` |
+| `DSQL_HOST_SINGAPORE` | live DSQL | Aurora DSQL endpoint in `ap-southeast-1` |
+| `DSQL_HOST` | db scripts | Endpoint used by `db:schema` / `db:seed` (use the Virginia host) |
+| `DSQL_REGION` | db scripts | Region of `DSQL_HOST`; falls back to `AWS_REGION`, then `us-east-1` |
+| `AWS_REGION` | live DSQL | Default AWS region, `us-east-1` |
+| `AWS_ROLE_ARN` | live DSQL (preferred) | IAM role assumed through Vercel OIDC, no static keys. Locally, `vercel env pull .env.local` provides `VERCEL_OIDC_TOKEN` |
+| `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN` | live DSQL (fallback) | Static credentials with `dsql:DbConnectAdmin`, for local use only |
+
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start the dev server on `http://localhost:3000` |
+| `npm run build` / `npm start` | Production build and server |
+| `npm run lint` | ESLint |
+| `npm run db:schema` | Apply `db/schema.sql` (one statement per transaction, as DSQL requires) |
+| `npm run db:seed` | Load sample components and incidents |
+| `npm run db:reset` | `db:schema` then `db:seed` |
+
+## Deploying to Vercel
+
+1. Import the repo into Vercel.
+2. Add the environment variables above (use `AWS_ROLE_ARN` with the Vercel AWS integration rather than static keys).
+3. Deploy. Without DSQL variables the deployment serves the labelled mock mode.
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+|---|---|
+| "Mock mode" banner is showing | No `DSQL_HOST*` is set, or `.env.local` wasn't loaded |
+| Token or auth errors when connecting | Missing `AWS_ROLE_ARN`/credentials, or the role lacks `dsql:DbConnectAdmin`. OIDC tokens from `vercel env pull` are short-lived; pull again |
+| Schema script fails | DSQL accepts one DDL statement per transaction and has no foreign keys or sequences; use `run-sql.mjs`, not `psql` with a multi-statement file |
+| Updates show "auto-retried N×" | Expected: two writers touched the same row and OCC retried one of them |
+
 ## Tech
 
 Next.js 16 (App Router) · React 19 · Tailwind v4 · base-ui · `pg` · `@aws-sdk/dsql-signer` ·
